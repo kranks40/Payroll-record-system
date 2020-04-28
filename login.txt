@@ -1,0 +1,84 @@
+from tkinter import *
+import tkinter.messagebox
+import random
+import time, datetime
+
+
+class Login:
+    def __init__(self, root):
+        self.root = root
+        self.root.title('Login System')
+        self.root.iconbitmap('/payroll record system/images/login_icon.ico')
+        self.root.geometry('530x445+0+0')
+        self.root.resizable(width=FALSE, height=FALSE)
+        self.root.config(bg='#4d7c94')
+
+
+        # ==================================Images===========================================================================
+
+        self.img1 = PhotoImage(file='images/password-icon.png')
+        self.img2 = PhotoImage(file='images/user-icon.png')
+        self.img3 = PhotoImage(file='images/username-icon.png')
+
+        self.lblTitle = Label(self.root, text='Login', bd=12, relief=GROOVE, bg='powder blue',
+                              font=('helvetica', 30, 'bold'), pady=2).pack(fill=BOTH)
+        #====================================Variables==================================================================
+        self.Password = StringVar()
+        self.UserName = StringVar()
+
+        #======================================Login Frame==============================================================
+
+        login_Frame = Frame(self.root, bg='cadet blue', bd=12, relief=GROOVE)
+        login_Frame.place(x=0, y=75)
+
+        logo_lbl = Label(login_Frame, image=self.img2, bg='cadet blue')
+        logo_lbl.grid(row=0, column=0, pady=20, columnspan=3)
+
+        logo_user = Label(login_Frame, text='Username', image=self.img3,compound=LEFT, font=('helvetica',15, 'bold'),bg='cadet blue')
+        logo_user.grid(row=1, column=0, padx=20, pady=10)
+        user_txt = Entry(login_Frame, font='arial 15', bd=7, relief=SUNKEN, width=15, textvariable=self.UserName)
+        user_txt.grid(row=1, column=1, pady=3)
+
+        logo_pass = Label(login_Frame, text='Password', image=self.img1, compound=LEFT, font=('helvetica', 15, 'bold'),bg='cadet blue')
+        logo_pass.grid(row=2, column=0, padx=20, pady=10)
+        pass_txt = Entry(login_Frame, font='arial 15', show='*', bd=7, relief=SUNKEN, width=15, textvariable=self.Password)
+        pass_txt.grid(row=2, column=1, pady=3)
+        #======================================Buttons==================================================================
+
+        login_btn = Button(login_Frame, text='Login', font='arial 10 bold', bg='powder blue', pady=5, padx=2,
+                           width=15, command=self.login)
+        login_btn.grid(row=3, column=0, sticky=W, padx=10,pady=10)
+
+        Clear_btn = Button(login_Frame, text='Reset', font='arial 10 bold', bg='powder blue', pady=5, padx=2,width=15,
+                           command=self.iReset)
+        Clear_btn.grid(row=3, column=1, sticky=W, padx=10)
+
+        Exit_btn = Button(login_Frame, text='Exit', font='arial 10 bold', bg='powder blue', pady=5, padx=2,width=15,
+                          command=self.iExit)
+        Exit_btn.grid(row=3, column=2, sticky=W, padx=10)
+
+    def iExit(self):
+        op = tkinter.messagebox.askyesno('Login System', 'Do you want to exit the program')
+        if op > 0:
+            self.root.destroy()
+        else:
+            return
+
+    def iReset(self):
+        self.Password.set('')
+        self.UserName.set('')
+
+    def login(self):
+        if self.UserName.get() == 'Fresh' and self.Password.get() == '1234':
+            tkinter.messagebox.Message('You have Successfully logged in')
+            self.root.destroy()
+            import Payroll_Record_System
+            Payroll_Record_System.Payroll_System()
+        else:
+            tkinter.messagebox.showerror('Error', 'Wrong Username or Password')
+
+
+
+root = Tk()
+application = Login(root)
+root.mainloop()
