@@ -1,0 +1,504 @@
+from tkinter import *
+import tkinter.messagebox
+import random
+from tkinter import ttk
+from datetime import datetime
+import os
+
+
+class Payroll_System:
+    def __init__(self):
+        self.root = Tk()
+        self.root.title('Payroll System')
+        self.root.iconbitmap('/payroll record system/images/pay-system.ico')
+        self.root.geometry('885x825+0+0')
+        self.root.resizable(width=FALSE, height=FALSE)
+        self.root.config(bg='#4d7c94')
+
+        self.lblTitle = Label(self.root, text='Payroll File Based Record System', bd=12, relief=GROOVE,
+                              bg='powder blue',
+                              font=('helvetica', 30, 'bold'), pady=5).pack(fill=X)
+
+        # =============================================Menu==============================================================
+        def iExit():
+            op = tkinter.messagebox.askyesno('Simple Calculator', 'Are you sure exiting is wise?')
+            if op > 0:
+                root.destroy()
+            return
+
+        def opens():
+            root.filename = filedialog.askopenfilename(initialdir='C:/', title='Select a file',
+                                                       filetype=(('pdf files', '*.pdf'), ('Any files', '*.*')))
+
+        self.menu = Menu(self.root)
+        self.root.config(menu=self.menu)
+        submenu = Menu(self.menu, tearoff=0)
+        self.menu.add_cascade(label='File', menu=submenu)
+        submenu.add_command(label='Open file', command=opens)
+        submenu.add_command(label='Calculator', command=Calculator)
+        submenu.add_separator()
+        submenu.add_command(label='Save')
+        submenu.add_command(label='Exit', command=iExit)
+
+        help_menu = Menu(self.menu, tearoff=0)
+        self.menu.add_cascade(label='Help', menu=help_menu)
+        help_menu.add_command(label='? Help')
+        help_menu.add_command(label='Getting Started')
+        help_menu.add_command(label='About the App')
+        # ============================================Variables==================================================================
+        self.emp_no = StringVar()
+        x = random.randint(1, 100000)
+        self.emp_no.set(str(x))
+        self.employer = StringVar()
+        self.emp_name = StringVar()
+        self.emp_position = StringVar()
+        self.basic_salary = IntVar()
+        self.date_paid = StringVar()
+        self.gender = StringVar()
+        self.allowance = IntVar()
+        self.gross_pay = StringVar()
+        self.net_pay = StringVar()
+        self.income_tax = IntVar()
+        self.nis = IntVar()
+        self.loans = IntVar()
+        self.deduction = StringVar()
+
+        # =====================================Employer & Employee Details=========================================================
+
+        E_E_Frame = LabelFrame(self.root, text='Payroll Details', font=('helvetica', 12, 'bold'), fg='gold',
+                               relief=GROOVE, bd=12, bg='#4d7c94')
+        E_E_Frame.place(x=0, y=80, width=495, height=385)
+
+        self.Employer_lbl = Label(E_E_Frame, text='Employer', font=('times new roman', 18, 'bold'), bg='#4d7c94')
+        self.Employer_lbl.grid(row=0, column=0, padx=10, pady=10, sticky=W)
+        self.Employer_txt = Entry(E_E_Frame, font='arial 15', bd=7, relief=SUNKEN, width=20,
+                                  textvariable=self.employer, state=NORMAL)
+        self.Employer_txt.grid(row=0, column=1, pady=10, sticky=W)
+
+        self.employee_lbl = Label(E_E_Frame, text='Employee No', font=('times new roman', 18, 'bold'), bg='#4d7c94')
+        self.employee_lbl.grid(row=1, column=0, padx=10, pady=10, sticky=W)
+        self.employee_txt = Entry(E_E_Frame, font='arial 15', bd=7, relief=SUNKEN, width=20, textvariable=self.emp_no,
+                                  state=DISABLED)
+        self.employee_txt.grid(row=1, column=1, pady=10, sticky=W)
+
+        self.Emp_Name_lbl = Label(E_E_Frame, text='Employee Name', font=('times new roman', 18, 'bold'), bg='#4d7c94')
+        self.Emp_Name_lbl.grid(row=2, column=0, padx=10, pady=10, sticky=W)
+        self.Emp_Name_txt = Entry(E_E_Frame, font='arial 15', bd=7, relief=SUNKEN, width=20,
+                                  textvariable=self.emp_name, state=NORMAL)
+        self.Emp_Name_txt.grid(row=2, column=1, pady=10, sticky=W)
+
+        self.Emp_Position_lbl = Label(E_E_Frame, text='Position', font=('times new roman', 18, 'bold'),
+                                      bg='#4d7c94')
+        self.Emp_Position_lbl.grid(row=3, column=0, padx=10, pady=10, sticky=W)
+        self.Emp_Position_txt = Entry(E_E_Frame, font='arial 15', bd=7, relief=SUNKEN, width=20,
+                                      textvariable=self.emp_position, state=NORMAL)
+        self.Emp_Position_txt.grid(row=3, column=1, pady=10, sticky=W)
+
+        self.Date_Paid_lbl = Label(E_E_Frame, text='Date Paid', font=('times new roman', 18, 'bold'), bg='#4d7c94')
+        self.Date_Paid_lbl.grid(row=4, column=0, padx=10, pady=10, sticky=W)
+        self.Date_Paid_txt = Entry(E_E_Frame, font='arial 15', bd=7, relief=SUNKEN, width=20,
+                                   textvariable=self.date_paid, state=DISABLED)
+        self.Date_Paid_txt.grid(row=4, column=1, pady=10, sticky=W)
+
+        self.gender_lbl = Label(E_E_Frame, text='Gender', font=('times new roman', 18, 'bold'), bg='#4d7c94')
+        self.gender_lbl.grid(row=5, column=0, padx=10, pady=10, sticky=W)
+
+        self.cboGender = ttk.Combobox(E_E_Frame, textvariable=self.gender, state='readonly',
+                                      font=('times new roman', 18, 'bold'), width=18)
+        self.cboGender['value'] = ('Select', 'Male', 'Female')
+        self.cboGender.current(0)
+        self.cboGender.grid(row=5, column=1, pady=4)
+        # ==========================================Payment Detail=======================================================
+        P_Frame = LabelFrame(self.root, text='Payment Details', font=('helvetica', 12, 'bold'), fg='gold',
+                             relief=GROOVE, bd=12, bg='#4d7c94')
+        P_Frame.place(x=0, y=460, width=880, height=270)
+
+        self.Basic_Salary_lbl = Label(P_Frame, text='Basic Salary', font=('times new roman', 18, 'bold'),
+                                      bg='#4d7c94')
+        self.Basic_Salary_lbl.grid(row=0, column=0, padx=10, pady=10, sticky=W)
+        self.Basic_Salary_txt = Entry(P_Frame, font='arial 15', bd=7, relief=SUNKEN, width=20,
+                                      textvariable=self.basic_salary, state=NORMAL)
+        self.Basic_Salary_txt.grid(row=0, column=1, pady=10, sticky=W)
+
+        self.Allowance_lbl = Label(P_Frame, text='Allowances', font=('times new roman', 18, 'bold'), bg='#4d7c94')
+        self.Allowance_lbl.grid(row=1, column=0, padx=10, pady=10, sticky=W)
+        self.Allowance_txt = Entry(P_Frame, font='arial 15', bd=7, relief=SUNKEN, width=20,
+                                   textvariable=self.allowance, state=NORMAL)
+        self.Allowance_txt.grid(row=1, column=1, pady=10, sticky=W)
+
+        self.Gross_Pay_lbl = Label(P_Frame, text='Gross Pay', font=('times new roman', 18, 'bold'), bg='#4d7c94')
+        self.Gross_Pay_lbl.grid(row=2, column=0, padx=10, pady=10, sticky=W)
+        self.Gross_Pay_txt = Entry(P_Frame, font='arial 15', bd=7, relief=SUNKEN, width=20,
+                                   textvariable=self.gross_pay, state=DISABLED)
+        self.Gross_Pay_txt.grid(row=2, column=1, pady=10, sticky=W)
+
+        self.Net_Pay_lbl = Label(P_Frame, text='Net Pay', font=('times new roman', 18, 'bold'),
+                                 bg='#4d7c94')
+        self.Net_Pay_lbl.grid(row=3, column=0, padx=10, pady=10, sticky=W)
+        self.Net_Pay_txt = Entry(P_Frame, font='arial 15', bd=7, relief=SUNKEN, width=20,
+                                 textvariable=self.net_pay, state=DISABLED)
+        self.Net_Pay_txt.grid(row=3, column=1, pady=10, sticky=W)
+
+        self.Income_Tax_lbl = Label(P_Frame, text='Income Tax', font=('times new roman', 18, 'bold'), bg='#4d7c94')
+        self.Income_Tax_lbl.grid(row=0, column=2, padx=20, pady=10, sticky=W)
+        self.Income_Tax_txt = Entry(P_Frame, font='arial 15', bd=7, relief=SUNKEN, width=20,
+                                    textvariable=self.income_tax, state=NORMAL)
+        self.Income_Tax_txt.grid(row=0, column=3, pady=10, padx=10, sticky=W)
+
+        self.NIS_lbl = Label(P_Frame, text='NIS', font=('times new roman', 18, 'bold'), bg='#4d7c94')
+        self.NIS_lbl.grid(row=1, column=2, padx=20, pady=10, sticky=W)
+        self.NIS_txt = Entry(P_Frame, font='arial 15', bd=7, relief=SUNKEN, width=20,
+                             textvariable=self.nis, state=NORMAL)
+        self.NIS_txt.grid(row=1, column=3, pady=10, padx=10, sticky=W)
+
+        self.Loans_lbl = Label(P_Frame, text='Loans', font=('times new roman', 18, 'bold'), bg='#4d7c94')
+        self.Loans_lbl.grid(row=2, column=2, padx=20, pady=10, sticky=W)
+        self.Loans_txt = Entry(P_Frame, font='arial 15', bd=7, relief=SUNKEN, width=20,
+                               textvariable=self.loans, state=NORMAL)
+        self.Loans_txt.grid(row=2, column=3, pady=10, padx=10, sticky=W)
+
+        self.Deduction_lbl = Label(P_Frame, text='Deductions', font=('times new roman', 18, 'bold'), bg='#4d7c94')
+        self.Deduction_lbl.grid(row=3, column=2, padx=20, pady=10, sticky=W)
+        self.Deduction_txt = Entry(P_Frame, font='arial 15', bd=7, relief=SUNKEN, width=20,
+                                   textvariable=self.deduction, state=DISABLED)
+        self.Deduction_txt.grid(row=3, column=3, pady=10, padx=10, sticky=W)
+
+        # ==========================================Record Area==============================================================
+        Record_Frame = LabelFrame(self.root, text='Payroll file Record', font=('helvetica', 12, 'bold'), fg='gold',
+                                  relief=GROOVE, bd=12, bg='#4d7c94')
+        Record_Frame.place(x=490, y=80, width=390, height=385)
+
+        payroll_title = Label(Record_Frame, text='Payroll Record Area', font=('helvetica', 15, 'bold'), bd=7,
+                              relief=GROOVE)
+        payroll_title.pack(fill=X)
+
+        scrol_y = Scrollbar(Record_Frame, orient=VERTICAL)
+        self.textarea = Listbox(Record_Frame, yscrollcommand=scrol_y.set)
+        scrol_y.pack(side=RIGHT, fill=Y)
+        scrol_y.config(command=self.textarea.yview)
+        self.textarea.pack(fill=BOTH, expand=1)
+        self.textarea.bind('<ButtonRelease-1>', self.get_data)
+        self.show_file()
+
+        # ============================================Buttons================================================================
+        fun_btn = Frame(self.root, bg='#4d7c94', bd=10,
+                        relief=GROOVE)
+        fun_btn.place(x=0, y=730, width=880, height=70)
+
+        self.save_btn = Button(fun_btn, text='Save', font='arial 10 bold', bg='powder blue', pady=2, padx=0,
+                               width=12, command=self.save_data)
+        self.save_btn.grid(row=0, column=0, sticky=W + N + E + S, padx=8, pady=7)
+
+        self.delete_btn = Button(fun_btn, text='Delete', font='arial 10 bold', bg='powder blue', pady=2, padx=0,
+                                 width=12, command=self.delete)
+        self.delete_btn.grid(row=0, column=1, sticky=W + N + E + S, padx=8, pady=7)
+
+        self.wage_pay_btn = Button(fun_btn, text='Wage Payment', font='arial 10 bold', bg='powder blue', pady=5, padx=2,
+                                   width=12, command=self.wage)
+        self.wage_pay_btn.grid(row=0, column=2, sticky=W + N + E + S, padx=8, pady=7)
+
+        self.clear_btn = Button(fun_btn, text='Clear', font='arial 10 bold', bg='powder blue', pady=5, padx=2, width=12,
+                                command=self.clear)
+        self.clear_btn.grid(row=0, column=3, sticky=W + N + E + S, padx=8, pady=7)
+
+        self.logout_btn = Button(fun_btn, text='Logout', font='arial 10 bold', bg='powder blue', pady=5, padx=2,
+                                 width=12, command=self.logout)
+        self.logout_btn.grid(row=0, column=4, sticky=W + N + E + S, padx=8, pady=7)
+
+        self.print_btn = Button(fun_btn, text='Print', font='arial 10 bold', bg='powder blue', pady=5, padx=2, width=12,
+                                command=self.iPrint)
+        self.print_btn.grid(row=0, column=5, sticky=W + N + E + S, padx=8, pady=7)
+
+        self.exit_btn = Button(fun_btn, text='Exit', font='arial 10 bold', bg='powder blue', pady=5, padx=2, width=12,
+                               command=self.iExit)
+        self.exit_btn.grid(row=0, column=6, sticky=W + N + E + S, padx=8, pady=7)
+        self.root.mainloop()
+
+    def save_data(self):
+        present = 'no'
+        if self.employer.get() == '':
+            tkinter.messagebox.showerror('Error', 'You must enter information to continue')
+        else:
+            self.save_file()
+            f = os.listdir('file/')
+            if len(f) > 0:
+                for i in f:
+                    if i.split('.')[0] == self.emp_no.get():
+                        present = 'no'
+
+                if present == 'yes':
+                    ask = tkinter.messagebox.askyesno('Update', 'File already exist, Do you want to update?')
+                    if ask > 0:
+                        self.save_file()
+                        tkinter.messagebox.showinfo('Update', 'Record was updated Successfully')
+                        self.show_file()
+                else:
+                    ask = tkinter.messagebox.askyesno('Saved', 'Do you want to save Record?')
+                    if ask > 0:
+                        self.save_file()
+                        tkinter.messagebox.showinfo('Saved', 'Record was saved Successfully')
+                        self.show_file()
+
+    def save_file(self):
+        f = open('file/' + str(self.emp_no.get()) + '.doc', 'w')
+        f.write(
+            str(self.employer.get()) + ',' +
+            str(self.emp_no.get()) + ',' +
+            str(self.emp_name.get()) + ',' +
+            str(self.emp_position.get()) + ',' +
+            str(self.date_paid.get()) + ',' +
+            str(self.gender.get()) + ',' +
+            str(self.basic_salary.get()) + ',' +
+            str(self.allowance.get()) + ',' +
+            str(self.gross_pay.get()) + ',' +
+            str(self.net_pay.get()) + ',' +
+            str(self.income_tax.get()) + ',' +
+            str(self.nis.get()) + ',' +
+            str(self.loans.get()) + ',' +
+            str(self.deduction.get()) + ','
+        )
+        f.close()
+
+    def show_file(self):
+        file = os.listdir('file/')
+        self.textarea.delete(0, END)
+        if len(file) > 0:
+            for i in file:
+                self.textarea.insert(END, i)
+
+    def get_data(self, evt):
+        get_cursor = self.textarea.curselection()
+        f1 = open('file/' + self.textarea.get(get_cursor))
+        value = []
+        for f in f1:
+            value = f.split(',')
+        self.employer.set(value[0])
+        self.emp_no.set(value[1])
+        self.emp_name.set(value[2])
+        self.emp_position.set(value[3])
+        self.date_paid.set(value[4])
+        self.gender.set(value[5])
+        self.basic_salary.set(value[6])
+        self.allowance.set(value[7])
+        self.gross_pay.set(value[8])
+        self.net_pay.set(value[9])
+        self.income_tax.set(value[10])
+        self.nis.set(value[11])
+        self.loans.set(value[12])
+        self.deduction.set(value[13])
+
+    def clear(self):
+        tkinter.messagebox.askquestion('Payroll file Based Record System', 'Do you really want to clear the data?')
+        self.employer.set('')
+        self.emp_no.set('')
+        self.emp_name.set('')
+        self.emp_position.set('')
+        self.date_paid.set('')
+        self.gender.set('Select')
+        self.basic_salary.set('0')
+        self.allowance.set('0')
+        self.gross_pay.set('0')
+        self.net_pay.set('0')
+        self.income_tax.set('0')
+        self.nis.set('0')
+        self.loans.set('0')
+        self.deduction.set('0')
+        x = random.randint(1, 100000)
+        self.emp_no.set(str(x))
+
+    def iPrint(self):
+        self.save_file()
+        #f = open('file/' + str(self.emp_no.get()) + '.doc', 'r')
+        open('file/', 'r').write('file/')
+        os.startfile('file/', 'print')
+
+
+    def iExit(self):
+        op = tkinter.messagebox.askyesno('Exit', 'Do you really want to exit:')
+        if op > 0:
+            self.root.destroy()
+            return
+
+    def delete(self):
+        present = 'no'
+        if self.employer.get() == '':
+            tkinter.messagebox.showerror('Error', 'You must enter information to continue')
+        else:
+            self.save_file()
+            f = os.listdir('file/')
+            if len(f) > 0:
+                for i in f:
+                    if i.split('.')[0] == self.emp_no.get():
+                        present = 'yes'
+                if present == 'yes':
+                    ask = tkinter.messagebox.askyesno('Delete', 'Do you really want to delete the data?')
+                    if ask > 0:
+                        os.remove('file/' + self.emp_no.get() + '.doc')
+                        tkinter.messagebox.showinfo('Success', 'Data deleted successfully')
+                        self.show_file()
+                else:
+                    tkinter.messagebox.showerror('Error', 'File not found')
+
+    def logout(self):
+        ask = tkinter.messagebox.askyesno('Logout', 'Are you sure you want to Logout?')
+        if ask > 0:
+            self.root.destroy()
+            import Login
+
+    def wage(self):
+        if self.basic_salary.get() and self.allowance.get() and self.income_tax.get() and self.nis and self.loans == '':
+            tkinter.messagebox.showerror('Error', 'Please enter data before proceeding')
+        today = datetime.today()
+        self.date_paid.set(today.strftime('%d %B %Y'))
+
+        self.inc_tax = self.income_tax.get()
+        self.nis_pay = self.nis.get()
+        self.loan = self.loans.get()
+        self.b_s = self.basic_salary.get()
+        self.A = self.allowance.get()
+
+        self.ded_total = int(
+            self.inc_tax +
+            self.nis_pay +
+            self.loan
+        )
+        self.deduction.set('XCD ' + str(self.ded_total))
+
+        self.G_P_total = int(
+            self.b_s +
+            self.A
+        )
+        self.gross_pay.set('XCD ' + str(self.G_P_total))
+
+        self.net_pay.set('XCD ' + str(self.G_P_total - self.ded_total))
+
+
+class Calculator:
+    def __init__(self):
+        self.New = Toplevel()
+        self.result = FALSE
+        self.current = '0'
+        self.operator = ''
+        self.New.title(' Simple Calculator')
+        self.New.iconbitmap('/Calculator/images/calculator2.ico')
+        self.New.geometry('300x450+0+0')
+        self.New.resizable(width=FALSE, height=FALSE)
+        bg_C = '#4d7c94'
+        self.New.config(bg='#4d7c94')
+
+        # =======================================Variables===================================================================
+
+        self.num_input = StringVar()
+        self.operator = ''
+
+        # =====================================Frame and Label===============================================================
+
+        F1 = Frame(self.New, bg=bg_C, bd=10, relief=GROOVE)
+        F1.place(x=0, y=3, width=300, height=70)
+
+        num_txt = Entry(F1, font='arial 15', bd=7, relief=SUNKEN, width=24, textvariable=self.num_input,
+                        justify='right')
+        num_txt.grid(row=0, column=1, pady=5)
+        # =======================================Calculator==================================================================
+
+        btn_F = Frame(self.New, bd=12, relief=GROOVE, bg='#4d7c94')
+        btn_F.place(x=0, y=70, width=300, height=380)
+
+        btn_perc = Button(btn_F, text=chr(37), font='arial 15 bold', bg='powder blue', pady=10, padx=12, bd=8,
+                          command=self.percentage)
+        btn_perc.grid(row=0, column=0, sticky=W)
+
+        btn_canc_exact = Button(btn_F, text='CE', font='arial 14 bold', bg='powder blue', pady=10, padx=7, bd=8,
+                                command=self.clearLast)
+        btn_canc_exact.grid(row=0, column=1, sticky=W)
+
+        btn_canc = Button(btn_F, text=chr(67), font='arial 15 bold', bg='powder blue', pady=10, padx=13, bd=8,
+                          command=self.btnClear)
+        btn_canc.grid(row=0, column=2, sticky=W)
+
+        btn_bac = Button(btn_F, text='<', font='arial 15 bold', bg='powder blue', pady=10, padx=14, bd=8,
+                         )
+        btn_bac.grid(row=0, column=3, sticky=W)
+
+        btn7 = Button(btn_F, text='7', font='arial 15 bold', bg='powder blue', pady=10, padx=14, bd=8,
+                      command=lambda: self.btnClick(7))
+        btn7.grid(row=1, column=0, sticky=W)
+
+        btn8 = Button(btn_F, text='8', font='arial 15 bold', bg='powder blue', pady=10, padx=14, bd=8,
+                      command=lambda: self.btnClick(8))
+        btn8.grid(row=1, column=1, sticky=W)
+
+        btn9 = Button(btn_F, text='9', font='arial 15 bold', bg='powder blue', pady=10, padx=14, bd=8,
+                      command=lambda: self.btnClick(9))
+        btn9.grid(row=1, column=2, sticky=W)
+
+        btn_div = Button(btn_F, text=chr(247), font='arial 15 bold', bg='powder blue', pady=10, padx=15, bd=8,
+                         command=lambda: self.btnClick('/'))
+        btn_div.grid(row=1, column=3, sticky=W)
+
+        btn4 = Button(btn_F, text='4', font='arial 15 bold', bg='powder blue', pady=10, padx=14, bd=8,
+                      command=lambda: self.btnClick(4))
+        btn4.grid(row=2, column=0, sticky=W)
+
+        btn5 = Button(btn_F, text='5', font='arial 15 bold', bg='powder blue', pady=10, padx=14, bd=8,
+                      command=lambda: self.btnClick(5))
+        btn5.grid(row=2, column=1, sticky=W)
+
+        btn6 = Button(btn_F, text='6', font='arial 15 bold', bg='powder blue', pady=10, padx=14, bd=8,
+                      command=lambda: self.btnClick(6))
+        btn6.grid(row=2, column=2, sticky=W)
+
+        btn_mult = Button(btn_F, text='x', font='arial 15 bold', bg='powder blue', pady=10, padx=15, bd=8,
+                          command=lambda: self.btnClick('*'))
+        btn_mult.grid(row=2, column=3, sticky=W)
+
+        btn1 = Button(btn_F, text='1', font='arial 15 bold', bg='powder blue', pady=10, padx=14, bd=8,
+                      command=lambda: self.btnClick(1))
+        btn1.grid(row=3, column=0, sticky=W)
+
+        btn2 = Button(btn_F, text='2', font='arial 15 bold', bg='powder blue', pady=10, padx=14, bd=8,
+                      command=lambda: self.btnClick(2))
+        btn2.grid(row=3, column=1, sticky=W)
+
+        btn3 = Button(btn_F, text='3', font='arial 15 bold', bg='powder blue', pady=10, padx=14, bd=8,
+                      command=lambda: self.btnClick(3))
+        btn3.grid(row=3, column=2, sticky=W)
+
+        btn_subt = Button(btn_F, text=chr(45), font='arial 15 bold', bg='powder blue', pady=10, padx=17, bd=8,
+                          command=lambda: self.btnClick('-'))
+        btn_subt.grid(row=3, column=3, sticky=W)
+
+        btn0 = Button(btn_F, text='0', font='arial 15 bold', bg='powder blue', pady=10, padx=14, bd=8,
+                      command=lambda: self.btnClick(0))
+        btn0.grid(row=4, column=0, sticky=W)
+
+        btn_dot = Button(btn_F, text='.', font='arial 15 bold', bg='powder blue', pady=10, padx=16, bd=8,
+                         command=lambda: self.btnClick('.'))
+        btn_dot.grid(row=4, column=1, sticky=W)
+
+        btn_plus = Button(btn_F, text='+', font='arial 15 bold', bg='powder blue', pady=10, padx=14, bd=8,
+                          command=lambda: self.btnClick('+'))
+        btn_plus.grid(row=4, column=2, sticky=W)
+
+        btn_equal = Button(btn_F, text='=', font='arial 15 bold', bg='powder blue', pady=10, padx=14, bd=8,
+                           command=self.equal)
+        btn_equal.grid(row=4, column=3, sticky=W)
+
+    def btnClick(self, numbers):
+        self.operator = self.operator + str(numbers)
+        self.num_input.set(self.operator)
+
+    def equal(self):
+        self.add = str(eval(self.operator))
+        self.calc = self.num_input.set(self.add)
+
+    def btnClear(self):
+        self.operator = ''
+        self.num_input.set('')
+
+    def clearLast(self):
+        self.btnClear()
+        self.num_input.set('0')
+
+    def percentage(self):
+        self.num_input.get() / (100)
